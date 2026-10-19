@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open APIs – Gild Investment Trust</title><link rel="icon" href="git-logo-circle.png"><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="wrap nav">
+  <a class="brand" href="index.html"><img src="git-logo-circle.png" alt="GIT logo"><span>Gild Investment Trust</span></a>
+  <nav><a href="index.html#products">Products</a><a href="index.html#about">Why GIT</a><a class="btn" href="contact.html">Contact us</a></nav>
+</div></header>
+<main><div class="legal wide">
+<p class="crumb" style="padding:0"><a href="index.html">Home</a> / <a href="index.html#about">Why GIT</a> / Open APIs</p>
+<h1>Open APIs at GIT</h1>
+<p class="note">Fictional description for an imaginary company. External links lead to the public pages of the named organisations; no partnership or endorsement is implied. CNCF project maturity levels change over time, so check the <a href="https://www.cncf.io/projects/" target="_blank" rel="noopener" style="color:var(--gold)">CNCF project list</a> for current status.</p>
+
+<h2>1. Definition</h2>
+<p>An <b>Open API</b> at GIT is an interface that is (a) <b>publicly documented</b> with a machine-readable specification, (b) built on <b>open standards</b> rather than proprietary protocols, (c) <b>versioned with a published compatibility policy</b>, and (d) usable by any developer with standard tools, with no mandatory GIT-specific client. Specifications and software development kits are published under licences approved by the <a href="https://opensource.org/" target="_blank" rel="noopener" style="color:var(--gold)">Open Source Initiative (OSI)</a>; see the <a href="https://opensource.org/osd" target="_blank" rel="noopener" style="color:var(--gold)">Open Source Definition</a> for what that means. Every function available in the GIT user interface is also available through the API (API-first principle).</p>
+
+<h2>2. API styles and standards</h2>
+<div class="tbl"><table>
+<tr><th>Style</th><th>Standard</th><th>Used for</th></tr>
+<tr><td><b>Request/response</b></td><td>REST over HTTPS, JSON, described with <a href="https://spec.openapis.org/oas/latest.html" target="_blank" rel="noopener" style="color:var(--gold)">OpenAPI Specification</a> 3.1 (<a href="https://www.openapis.org/" target="_blank" rel="noopener" style="color:var(--gold)">OpenAPI Initiative</a>)</td><td>Accounts, payments, orders, portfolios, cases, applications</td></tr>
+<tr><td><b>Events</b></td><td>Apache Kafka protocol and webhooks, described with <a href="https://www.asyncapi.com/" target="_blank" rel="noopener" style="color:var(--gold)">AsyncAPI</a>; event envelope in the <b>CloudEvents</b> format (a CNCF project)</td><td>Real-time notifications, transaction streams, audit events</td></tr>
+<tr><td><b>High-performance internal and partner calls</b></td><td><b>gRPC</b> with Protocol Buffers (a CNCF project)</td><td>Low-latency market-data and pricing services</td></tr>
+<tr><td><b>Streaming</b></td><td>WebSocket and Server-Sent Events</td><td>Live prices in GIT Terminal</td></tr>
+<tr><td><b>Industry formats</b></td><td>ISO 20022, FIX 4.4/5.0, <a href="https://www.berlin-group.org/" target="_blank" rel="noopener" style="color:var(--gold)">Berlin Group NextGenPSD2</a> compatible payment interfaces</td><td>Payments, trading connectivity, open banking</td></tr>
+</table></div>
+
+<h2>3. API security</h2>
+<ul>
+<li><b>Authentication and authorisation:</b> OAuth 2.0 and <a href="https://openid.net/connect/" target="_blank" rel="noopener" style="color:var(--gold)">OpenID Connect</a>, with fine-grained scopes per product and tenant; financial-grade profile (<a href="https://openid.net/wg/fapi/" target="_blank" rel="noopener" style="color:var(--gold)">FAPI</a>) for payment and account data.</li>
+<li><b>Sender-constrained tokens:</b> mutual TLS-bound tokens (RFC 8705) or DPoP (RFC 9449), so a stolen token cannot be reused.</li>
+<li><b>Policy enforcement:</b> authorisation decisions evaluated as code with Open Policy Agent; rate limits, quotas and schema validation at the gateway.</li>
+<li><b>Integrity:</b> optional JWS-signed requests and responses for non-repudiation of payment instructions; idempotency keys prevent duplicate bookings.</li>
+<li><b>Auditability:</b> every call carries a trace ID and is written to the tamper-evident audit log (see <a href="secure-by-design.html" style="color:var(--gold)">Secure by design</a>).</li>
+</ul>
+
+<h2>4. How the open-source ecosystem is used</h2>
+<p>GIT builds its API platform on community-governed software, many of which are hosted by the <a href="https://www.cncf.io/" target="_blank" rel="noopener" style="color:var(--gold)">Cloud Native Computing Foundation (CNCF)</a>, part of the Linux Foundation. The <a href="https://landscape.cncf.io/" target="_blank" rel="noopener" style="color:var(--gold)">CNCF Landscape</a> maps this ecosystem; the <a href="https://www.cncf.io/projects/" target="_blank" rel="noopener" style="color:var(--gold)">CNCF project list</a> shows each project's maturity.</p>
+<div class="tbl"><table>
+<tr><th>Role in the API platform</th><th>Open-source component</th><th>Governance</th></tr>
+<tr><td>Runtime and deployment</td><td>Kubernetes, Helm, Argo CD (GitOps)</td><td>CNCF projects</td></tr>
+<tr><td>API gateway and service mesh, mTLS, rate limiting</td><td>Envoy proxy</td><td>CNCF project</td></tr>
+<tr><td>Policy as code</td><td>Open Policy Agent</td><td>CNCF project</td></tr>
+<tr><td>Tracing, metrics and logs for every API call</td><td>OpenTelemetry, Prometheus</td><td>CNCF projects</td></tr>
+<tr><td>Event envelope and RPC</td><td>CloudEvents, gRPC</td><td>CNCF projects</td></tr>
+<tr><td>Identity provider option</td><td>Keycloak</td><td>CNCF project</td></tr>
+<tr><td>Event streaming and database</td><td>Apache Kafka; PostgreSQL</td><td>Apache Software Foundation; PostgreSQL Global Development Group</td></tr>
+</table></div>
+<p><b>Why this matters:</b> open standards and community-governed components mean no single vendor controls the interface, customers can inspect and replace parts, and the same API stack runs unchanged on any hyperscaler or on-premise (see <a href="cloud-or-on-premise.html" style="color:var(--gold)">Cloud or on-premise</a>). <b>GIT also contributes back:</b> the OpenAPI and AsyncAPI specifications and the client SDKs (Java, Python, TypeScript, Go) are published under the Apache License 2.0 in a public repository.</p>
+
+<h2>5. API lifecycle and compatibility policy</h2>
+<ol>
+<li><b>Design-first:</b> the OpenAPI/AsyncAPI file is written and reviewed before code; it is linted (for example with Spectral) in the build pipeline.</li>
+<li><b>Contract tests:</b> generated mock servers and automated tests prove that the implementation matches the specification.</li>
+<li><b>Versioning:</b> major version in the URL (<code>/v1/</code>); additive changes never break clients; breaking changes only in a new major version.</li>
+<li><b>Deprecation:</b> at least 12 months notice, signalled with <code>Deprecation</code> and <code>Sunset</code> HTTP headers and in the developer portal.</li>
+<li><b>Errors:</b> standard problem-details format (RFC 9457) with stable error codes; cursor-based pagination and consistent filtering.</li>
+<li><b>Sandbox and developer portal:</b> synthetic data, interactive documentation, API keys per environment and a status page.</li>
+</ol>
+
+<h2>6. API areas per product</h2>
+<div class="tbl"><table>
+<tr><th>Product</th><th>Example API resources and interfaces</th></tr>
+<tr><td><b>GIT CoreBank</b></td><td><code>/v1/accounts</code>, <code>/v1/transactions</code>, <code>/v1/products</code>; account and balance events</td></tr>
+<tr><td><b>GIT PayFlow</b></td><td><code>/v1/payments</code>, <code>/v1/mandates</code>; ISO 20022 mapping; instant-payment status events</td></tr>
+<tr><td><b>GIT Terminal</b></td><td>Streaming market data (WebSocket, gRPC), <code>/v1/instruments</code>, historical time series</td></tr>
+<tr><td><b>GIT Portfolio Manager</b></td><td><code>/v1/portfolios</code>, <code>/v1/positions</code>, <code>/v1/orders</code>, performance reports</td></tr>
+<tr><td><b>GIT TradeHub</b></td><td>FIX sessions and <code>/v1/executions</code>, allocations and settlement instructions</td></tr>
+<tr><td><b>GIT RiskGuard</b></td><td>Asynchronous jobs: <code>/v1/risk-runs</code> (VaR, stress tests) with result downloads</td></tr>
+<tr><td><b>GIT Comply</b></td><td><code>/v1/screenings</code>, <code>/v1/cases</code>, regulatory report submissions</td></tr>
+<tr><td><b>GIT LoanSuite, WealthAdvisor, FundLedger</b></td><td><code>/v1/applications</code> and <code>/v1/decisions</code>; <code>/v1/clients</code> and <code>/v1/plans</code>; <code>/v1/nav</code> and <code>/v1/investors</code></td></tr>
+</table></div>
+
+<h3>Example request</h3>
+<pre>POST /v1/payments HTTP/1.1
+Host: api.gild-investment.example
+Authorization: DPoP eyJhbGciOi...
+Idempotency-Key: 7f9c2a1e-5b3d-4c8a-9d21-0e6f1b2a3c4d
+Content-Type: application/json
+
+{
+  "debtorAccount":   { "iban": "DE00000000000000000000" },
+  "creditorAccount": { "iban": "DE11111111111111111111" },
+  "amount":          { "currency": "EUR", "value": "1250.00" },
+  "reference":       "Invoice 2026-0815",
+  "executionMode":   "INSTANT"
+}</pre>
+
+<h2>7. Regulatory and interoperability fit</h2>
+<ul>
+<li><b>PSD2 and open banking:</b> account and payment interfaces compatible with Berlin Group NextGenPSD2 style APIs and strong customer authentication.</li>
+<li><b>DORA (Arts. 28–30):</b> open, documented interfaces and complete data export in open formats support the exit strategy and portability expected in ICT service contracts; API availability and performance are part of the contractual service levels.</li>
+<li><b>GDPR:</b> consent-scoped access and machine-readable export support data subject rights such as portability.</li>
+</ul>
+<p><a class="btn" href="contact.html">Request API documentation and sandbox access</a></p>
+</div></main>
+<footer><div class="wrap"><span>© 2026 Gild Investment Trust (GIT). Fictional company for demonstration.</span><span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="imprint.html">Imprint</a></span></div></footer>
+</body></html>

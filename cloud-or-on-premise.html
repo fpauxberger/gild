@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud or on-premise – deployment options – Gild Investment Trust</title><link rel="icon" href="git-logo-circle.png"><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="wrap nav">
+  <a class="brand" href="index.html"><img src="git-logo-circle.png" alt="GIT logo"><span>Gild Investment Trust</span></a>
+  <nav><a href="index.html#products">Products</a><a href="index.html#about">Why GIT</a><a class="btn" href="contact.html">Contact us</a></nav>
+</div></header>
+<main><div class="legal wide">
+<p class="crumb" style="padding:0"><a href="index.html">Home</a> / <a href="index.html#about">Why GIT</a> / Cloud or on-premise</p>
+<h1>Cloud or on-premise: deployment options explained</h1>
+<p class="note">Fictional reference description for an imaginary company. Platform names are examples of technology categories, not partnerships or certifications.</p>
+
+<h2>1. Definition</h2>
+<p>"Cloud or on-premise" describes <b>where</b> GIT software runs and <b>who operates</b> the layers beneath it: hardware, virtualisation, network, storage and platform services. The same GIT application code can be deployed in any of the models below. What changes is the location of the infrastructure, the split of operational responsibility and the commercial model, not the product functionality.</p>
+
+<h2>2. The deployment models</h2>
+<div class="tbl"><table>
+<tr><th>Model</th><th>Technical definition</th></tr>
+<tr><td><b>Public cloud (hyperscaler)</b></td><td>Multi-tenant infrastructure operated by a large provider (for example AWS, Microsoft Azure, Google Cloud) in regions and availability zones. Compute, storage, network and managed services (databases, queues, key management) are consumed on demand through APIs and billed by usage. The provider operates everything below the hypervisor.</td></tr>
+<tr><td><b>Private cloud</b></td><td>Cloud-style infrastructure (virtualisation or Kubernetes with self-service APIs, automation and metering) dedicated to one organisation. It can run in the customer's own data centre or be hosted by a third party in dedicated hardware. Examples: OpenStack, VMware Cloud Foundation, Red Hat OpenShift.</td></tr>
+<tr><td><b>On-premise / own data centre</b></td><td>Servers, storage, network and facility (power, cooling, physical security) owned and operated by the customer, often as a classic server farm with virtual machines or bare metal. The customer is responsible for every layer from the building up.</td></tr>
+<tr><td><b>Sovereign / regional cloud</b></td><td>A cloud operated under the legal control of a jurisdiction (for example an EU-operated provider) with defined data-residency, personnel and key-control commitments.</td></tr>
+<tr><td><b>Hybrid cloud</b></td><td>Two or more different environments, typically on-premise or private plus public cloud, connected by private links and managed as one system. Different workloads or different tiers of one application run in different places.</td></tr>
+<tr><td><b>Multi-cloud</b></td><td>Use of services from <b>more than one public cloud provider</b>, for example AWS and Azure, to avoid dependence on a single supplier, meet regional needs or place workloads where a service fits best.</td></tr>
+</table></div>
+
+<h2>3. Technical differences: hyperscaler versus your own data centre</h2>
+<div class="tbl"><table>
+<tr><th>Aspect</th><th>Hyperscaler (public cloud)</th><th>Private cloud / own data centre</th></tr>
+<tr><td><b>Capacity and scaling</b></td><td>Near-instant elastic scaling (minutes), pay per use, no hardware lead time.</td><td>Capacity fixed by purchased hardware; expansion takes weeks to months; must be sized for peak load.</td></tr>
+<tr><td><b>Compute and virtualisation</b></td><td>Provider-managed hypervisor and fleet; many instance types, GPUs, serverless options; limited control over host hardware.</td><td>Full control of hosts, firmware, hypervisor and hardware choice (including bare metal and special accelerators).</td></tr>
+<tr><td><b>Network</b></td><td>Software-defined virtual networks, global backbone, managed load balancers and DDoS protection; traffic leaving the cloud is charged (egress).</td><td>Own switching, firewalls and links; very low internal latency; direct lines to exchanges, clearing houses and other banks.</td></tr>
+<tr><td><b>Storage and data</b></td><td>Object, block and file services with built-in replication across zones; managed databases.</td><td>SAN/NAS, local NVMe or software-defined storage you run and back up yourself.</td></tr>
+<tr><td><b>Security responsibility</b></td><td><b>Shared responsibility:</b> provider secures facilities, hardware and the base platform; customer secures configuration, identities, data and applications.</td><td>Customer secures everything, including physical access, firmware, hypervisor and network.</td></tr>
+<tr><td><b>Key control</b></td><td>Cloud KMS or dedicated cloud HSM; customer-managed or external keys possible, but the platform processes data.</td><td>Own HSMs under physical control of the customer.</td></tr>
+<tr><td><b>Operations</b></td><td>Provider handles hardware replacement, platform patching and facility operations; customer runs deployments and observability.</td><td>Customer needs staff for hardware, patching, capacity planning, backup, and 24/7 operations.</td></tr>
+<tr><td><b>Resilience</b></td><td>Multiple zones and regions available by design; provider-level outages and dependence on one provider are the main risk.</td><td>Resilience depends on the number of own sites and the quality of disaster-recovery design.</td></tr>
+<tr><td><b>Cost model</b></td><td>Operating expense, variable; cheap to start, costly for steady heavy workloads and large data transfer.</td><td>Capital expense plus operations; usually cheaper per unit for stable, predictable load at scale.</td></tr>
+<tr><td><b>Latency</b></td><td>Low within a region; depends on region distance for market connectivity.</td><td>Can be placed next to exchanges or core systems for ultra-low latency.</td></tr>
+<tr><td><b>Regulation and exit</b></td><td>Must be assessed as ICT third-party risk (concentration, subcontracting, exit plan); cloud providers may be designated critical third-party providers under DORA.</td><td>Outsourcing risk is lower, but the institution carries full ICT risk-management and resilience duties itself.</td></tr>
+</table></div>
+
+<h2>4. Key differentiators for choosing</h2>
+<ul>
+<li><b>Data sovereignty and residency:</b> where data physically sits and which legal system can reach it.</li>
+<li><b>Workload shape:</b> spiky or growing load favours cloud; stable, heavy, latency-critical load often favours own infrastructure.</li>
+<li><b>Operational capability:</b> do you have the people to run a data centre around the clock?</li>
+<li><b>Regulatory posture:</b> supervisors accept both models, but cloud use needs documented exit strategies, concentration-risk analysis and audit rights.</li>
+<li><b>Total cost of ownership</b> over five to seven years, including egress, licences, staff and hardware refresh.</li>
+<li><b>Lock-in:</b> the more proprietary managed services you use, the harder it is to move.</li>
+</ul>
+
+<h2>5. Hybrid cloud and multi-cloud explained</h2>
+<div class="tbl"><table>
+<tr><th></th><th>Hybrid cloud</th><th>Multi-cloud</th></tr>
+<tr><td><b>Combines</b></td><td>On-premise or private cloud <b>with</b> public cloud</td><td>Two or more <b>public</b> cloud providers</td></tr>
+<tr><td><b>Typical use</b></td><td>Keep core ledgers, sensitive data or low-latency trading on premise; run analytics, web front ends and burst capacity in the cloud; migrate step by step.</td><td>Reduce single-provider dependence, meet regional requirements, run active-active across providers for resilience.</td></tr>
+<tr><td><b>Technical needs</b></td><td>Private connectivity (dedicated lines, VPN), consistent identity, common Kubernetes and deployment tooling, data replication with defined consistency rules.</td><td>Provider-neutral platform (containers, Kubernetes, Terraform), portable data services, central observability and policy, cross-cloud networking.</td></tr>
+<tr><td><b>Main difficulty</b></td><td>Latency and consistency between sites; two operating models to run.</td><td>Complexity and cost; teams must master several platforms; lowest-common-denominator services.</td></tr>
+</table></div>
+
+<h2>6. How GIT software runs on every variant</h2>
+<p>GIT products are built as <b>portable, cloud-neutral software</b>. Every product ships as the same signed container images and Helm charts, deployed with Terraform and GitOps pipelines. Platform-specific parts sit behind small adapter interfaces, so the application never calls a provider's proprietary API in its core logic.</p>
+<div class="tbl"><table>
+<tr><th>Capability</th><th>Portable standard used</th><th>Maps to</th></tr>
+<tr><td>Runtime</td><td>OCI containers on <b>Kubernetes</b> (1.28 or later)</td><td>Managed Kubernetes on hyperscalers; OpenShift, Rancher or upstream Kubernetes on premise</td></tr>
+<tr><td>Database</td><td>PostgreSQL-compatible, with logical replication</td><td>Managed PostgreSQL in the cloud; self-run PostgreSQL clusters on premise</td></tr>
+<tr><td>Messaging</td><td>Apache Kafka protocol</td><td>Managed Kafka services; self-hosted Kafka</td></tr>
+<tr><td>Object storage</td><td>S3-compatible API</td><td>Cloud object storage; MinIO, Ceph or enterprise storage on premise</td></tr>
+<tr><td>Identity</td><td>OIDC / SAML</td><td>Cloud identity providers; Active Directory, Keycloak or other on-premise directories</td></tr>
+<tr><td>Keys and secrets</td><td>KMIP and PKCS#11 interfaces</td><td>Cloud KMS or HSM; own HSMs</td></tr>
+<tr><td>Observability</td><td>OpenTelemetry, Prometheus, syslog</td><td>Any monitoring and SIEM platform</td></tr>
+</table></div>
+
+<h3>Reference topologies</h3>
+<div class="tbl"><table>
+<tr><th>Topology</th><th>Layout</th><th>Typical customer</th></tr>
+<tr><td><b>A. GIT Cloud (hyperscaler)</b></td><td>GIT-operated or customer-account deployment across three availability zones in an EU region, second region for disaster recovery.</td><td>Challenger banks, fintechs, fast-growing asset managers</td></tr>
+<tr><td><b>B. Private / on-premise</b></td><td>Kubernetes in the customer data centre, two sites in active-passive or active-active mode, own HSMs, fully offline operation possible.</td><td>Large banks, insurers, institutions with strict sovereignty rules</td></tr>
+<tr><td><b>C. Hybrid</b></td><td>Core ledger and key material on premise; digital channels, analytics and burst processing in the cloud; private link with end-to-end encryption between them.</td><td>Institutions modernising step by step</td></tr>
+<tr><td><b>D. Multi-cloud</b></td><td>Active-active across two hyperscalers (for example AWS and Azure) with global load balancing and cross-cloud data replication; exit-ready by design.</td><td>Institutions with a high concentration-risk or resilience requirement</td></tr>
+</table></div>
+<p><b>What stays identical in all variants:</b> the application code, the encryption and key model, the audit-log format, the APIs and the upgrade process. <b>What differs:</b> who operates the infrastructure, service-level commitments and some convenience services, such as one-click scaling, which are available in managed cloud editions only. Customers can migrate between topologies without data-model change; the move needs an agreed project plan, a data-replication window and tests.</p>
+
+<h3>Regulatory fit</h3>
+<p>Because the same software runs everywhere, customers can implement the exit and concentration-risk expectations of DORA (Arts. 28–29): a documented exit plan with a tested target environment, portable data in open formats and no mandatory dependency on one provider's proprietary services. See also <a href="secure-by-design.html" style="color:var(--gold)">Secure by design</a> for the shared security controls that apply in every model.</p>
+<p><a class="btn" href="contact.html">Discuss your deployment model with us</a></p>
+</div></main>
+<footer><div class="wrap"><span>© 2026 Gild Investment Trust (GIT). Fictional company for demonstration.</span><span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="imprint.html">Imprint</a></span></div></footer>
+</body></html>

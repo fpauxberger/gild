@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Secure by design – technical definition – Gild Investment Trust</title><link rel="icon" href="git-logo-circle.png"><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="wrap nav">
+  <a class="brand" href="index.html"><img src="git-logo-circle.png" alt="GIT logo"><span>Gild Investment Trust</span></a>
+  <nav><a href="index.html#products">Products</a><a href="index.html#about">Why GIT</a><a class="btn" href="contact.html">Contact us</a></nav>
+</div></header>
+<main><div class="legal wide">
+<p class="crumb" style="padding:0"><a href="index.html">Home</a> / <a href="index.html#about">Why GIT</a> / Secure by design</p>
+<h1>Secure by design: technical definition</h1>
+<p class="note">Fictional reference architecture for an imaginary company. It describes design objectives and how they map to regulatory requirements; it is not a certification, audit result or legal advice. Regulatory status checked October 2026.</p>
+
+<h2>1. Definition</h2>
+<p><b>Secure by design</b> means that security properties are specified as requirements before implementation, derived from a threat model, enforced by the architecture itself rather than added afterwards, and verified continuously across build, release and operation. Three rules follow: <b>(a) secure by default</b>: the shipped configuration is the most restrictive one and weakening it requires an explicit, logged, authorised change; <b>(b) least privilege and default deny</b> for every identity, process and network flow; <b>(c) vendor accountability</b>: GIT carries the security engineering burden and does not shift it to the customer through optional settings. The approach follows the Saltzer–Schroeder design principles, NIST SP 800-160 Vol. 1 (systems security engineering) and the joint CISA/NCSC "Secure by Design" principles.</p>
+
+<h2>2. The two claims on our start page, defined precisely</h2>
+<div class="tbl"><table>
+<tr><th>Claim</th><th>Technical definition</th><th>Scope and boundary</th></tr>
+<tr><td><b>End-to-end encryption</b></td><td>Sensitive payloads (account numbers, client identity data, order and position data, documents) are encrypted <b>at the client or originating service with application-layer encryption</b> (AES-256-GCM data keys, wrapped with per-tenant RSA-3072/ECDH P-384 key-encryption keys, JWE format). They stay ciphertext through every hop, queue and store, and are decrypted only inside the service component that must process them, inside an isolated runtime. All hops additionally use <b>TLS 1.3</b> with mutual TLS (mTLS) between services.</td><td>Transport encryption alone (TLS) is <b>not</b> described as end-to-end. Data that must be computed on (for example risk calculations) is decrypted only in memory of the processing component and never written back in clear. Data at rest uses AES-256-XTS volume and AES-256-GCM field-level encryption.</td></tr>
+<tr><td><b>Continuous compliance monitoring</b></td><td>Controls are expressed as <b>policy-as-code</b> (for example Open Policy Agent rules) and evaluated automatically against infrastructure, configuration, identities and data flows on every change and at least every 15 minutes. Each evaluation produces time-stamped, signed evidence mapped to a control ID, a regulatory reference and an owner.</td><td>Detects configuration drift, expired keys and certificates, excessive privileges, unpatched components and failed backups. Deviations open tracked tickets with defined remediation times. It supports, but does not replace, human risk assessment and independent audit.</td></tr>
+</table></div>
+
+<h2>3. Technical solution by layer</h2>
+<div class="tbl"><table>
+<tr><th>Layer</th><th>Control and specification</th></tr>
+<tr><td><b>Cryptography and keys</b></td><td>Keys generated and held in <b>HSMs validated to FIPS 140-3 Level 3</b>; envelope encryption with per-tenant keys; automatic rotation (data keys at most 90 days, key-encryption keys at most 12 months); customer-managed keys (BYOK/HYOK) optional; split knowledge and dual control for key ceremonies. Password hashing with Argon2id; integrity via SHA-256/SHA-384; signatures with Ed25519 or ECDSA P-256; crypto-agility inventory and a post-quantum migration plan (ML-KEM hybrid key exchange).</td></tr>
+<tr><td><b>Identity and access</b></td><td>SSO via OIDC/SAML; <b>phishing-resistant MFA</b> (FIDO2/WebAuthn) for all staff and administrators; role- and attribute-based access control with deny by default; just-in-time privileged access with session recording; <b>four-eyes principle</b> and segregation of duties for production changes and key operations; quarterly access recertification. Strong customer authentication for payment components in line with PSD2 RTS 2018/389.</td></tr>
+<tr><td><b>Architecture and network</b></td><td>Zero-trust model: every request authenticated and authorised, no implicit trust by network location. Per-tenant logical isolation (separate encryption keys, schemas and namespaces), micro-segmentation, default-deny egress, WAF and layered DDoS protection, private connectivity for customer integrations. EU-only hosting regions with data-residency controls.</td></tr>
+<tr><td><b>Secure development lifecycle</b></td><td>Security requirements and <b>STRIDE threat model</b> per feature; mandatory peer review; SAST, DAST, software-composition analysis and secret scanning in CI; <b>SBOM</b> (CycloneDX) per release; signed, reproducible builds with provenance attestation (SLSA level 3 target); infrastructure as code scanned before deployment; independent penetration tests at least annually and after major changes; coordinated vulnerability disclosure; patch targets: critical within 7 days, high within 30 days.</td></tr>
+<tr><td><b>Logging and detection</b></td><td>Centralised, <b>tamper-evident audit logs</b> (hash-chained, write-once storage, retention 10 years for financial records unless law requires otherwise), time-synchronised; SIEM with behavioural analytics; 24/7 security operations centre; detection use cases mapped to MITRE ATT&amp;CK; log access itself audited.</td></tr>
+<tr><td><b>Resilience and recovery</b></td><td>Multi-zone active-active deployment; <b>RPO ≤ 5 minutes and RTO ≤ 2 hours</b> for critical functions (adjustable by contract); immutable, encrypted, offline-copy backups (3-2-1 rule) with restore tests at least quarterly; annual disaster-recovery exercise and chaos testing; documented exit plan and data export in open formats.</td></tr>
+<tr><td><b>Incident management</b></td><td>Documented process: detection, triage, classification against the DORA major-incident criteria, containment, recovery, root-cause analysis. Customers receive classification support and report data so they can meet their own notification deadlines (see section 5).</td></tr>
+<tr><td><b>Privacy engineering</b></td><td>Data minimisation, purpose binding, field-level pseudonymisation and masking for non-production data (no production data in test), role-based data classification, deletion and retention automation.</td></tr>
+</table></div>
+
+<h2>4. How continuous compliance monitoring works</h2>
+<ol>
+<li><b>Control catalogue:</b> each control has an ID, a testable assertion, an owner, a frequency and mappings to DORA articles, ISO/IEC 27001:2022 Annex A and BSI C5 criteria.</li>
+<li><b>Automated tests:</b> policy-as-code and agents collect configuration state and test it (for example "no storage without encryption", "no administrator without hardware MFA", "latest restore test younger than 90 days").</li>
+<li><b>Evidence store:</b> results are signed, time-stamped and kept immutable so that auditors and supervisors can reproduce any past state.</li>
+<li><b>Key risk indicators:</b> open critical vulnerabilities, mean time to patch, backup success rate, privileged-access exceptions, third-party SLA breaches. Thresholds trigger escalation to management.</li>
+<li><b>Review:</b> results feed management-body reporting, the annual ICT risk review and lessons learned after incidents and tests.</li>
+</ol>
+
+<h2>5. Mapping to financial regulation</h2>
+<p><b>Role clarification.</b> DORA (Regulation (EU) 2022/2554, applicable since 17 January 2025) places its obligations on <b>financial entities</b>. GIT acts as an <b>ICT third-party service provider</b>: it designs its products so that its customers can meet their DORA duties and agrees the contractual terms of Article 30. Responsibility for the customer's overall compliance stays with the customer (shared responsibility).</p>
+
+<h3>5.1 DORA</h3>
+<div class="tbl"><table>
+<tr><th>DORA requirement</th><th>How the design meets it</th></tr>
+<tr><td><b>ICT risk management, Arts. 5–16</b> and RTS (EU) 2024/1774: governance, identification, protection, detection, response, backup, learning</td><td>Control catalogue aligned to ISO/IEC 27001; asset and dependency inventory; threat-model-driven design; patch, change, cryptography, logging and network-security controls as listed in section 3, matching the topics of the RTS (encryption and key management, access control, logging, network security, change and patch management).</td></tr>
+<tr><td><b>Art. 9</b> protection and prevention: encryption, strong authentication, access limits, key management</td><td>Application-layer encryption, TLS 1.3/mTLS, FIPS 140-3 HSM key custody, FIDO2 MFA, least-privilege and just-in-time access, network segmentation.</td></tr>
+<tr><td><b>Art. 10</b> detection: anomalous activity, multiple control layers</td><td>SIEM, behavioural analytics, 24/7 SOC, tamper-evident logs, continuous control monitoring.</td></tr>
+<tr><td><b>Arts. 11–12</b> response, recovery, backup and restoration</td><td>Business-continuity and recovery plans, RPO/RTO targets, immutable backups, quarterly restore tests, annual DR exercise.</td></tr>
+<tr><td><b>Arts. 17–19</b> incident management and reporting of major incidents</td><td>Classification against DORA criteria; data for customer reports: <b>initial notification within 4 hours of classification as major, and at the latest 24 hours after becoming aware; intermediate report within 72 hours; final report within one month</b> (per the incident-reporting technical standards). GIT notifies affected customers without undue delay so they can meet these deadlines.</td></tr>
+<tr><td><b>Arts. 24–27</b> resilience testing, including threat-led penetration testing (TLPT, Art. 26)</td><td>Annual testing programme (vulnerability scans, source-code review, scenario and penetration tests per Art. 25); participation and support for customers' TLPT in line with TIBER-EU, with scope agreed in advance.</td></tr>
+<tr><td><b>Arts. 28–30</b> ICT third-party risk: register of information, contract content, exit strategies</td><td>Contract terms covering service levels, locations of data and processing, security measures, incident assistance, audit and access rights for customer and supervisor, subcontractor transparency, termination and exit support; data for the customer's register of information.</td></tr>
+</table></div>
+
+<h3>5.2 Germany (BaFin) and other frameworks</h3>
+<div class="tbl"><table>
+<tr><th>Framework</th><th>Position and design response</th></tr>
+<tr><td><b>BaFin ICT supervision</b></td><td>Since 17 January 2025 DORA applies directly in Germany. BaFin repealed ZAIT, VAIT and KAIT at the end of 16 January 2025; BAIT was narrowed to institutions outside DORA's ICT risk-management scope and is repealed completely at the end of 31 December 2026. GIT therefore maps to DORA first and keeps the proven BAIT-style controls (IT governance, identity and access management, change management, four-eyes principle) as part of the same control catalogue.</td></tr>
+<tr><td><b>KWG §§ 25a, 25b</b> and MaRisk (organisation, outsourcing)</td><td>Audit and information rights, subcontractor control, exit strategy and a documented, supervised outsourcing relationship in the contract. Customers remain responsible for the outsourcing risk assessment.</td></tr>
+<tr><td><b>GDPR Arts. 25 and 32</b></td><td>Data protection by design and by default; encryption, pseudonymisation, confidentiality, integrity, availability and regular testing of measures; EU data residency; processor agreement under Art. 28.</td></tr>
+<tr><td><b>PSD2 (RTS 2018/389)</b></td><td>Strong customer authentication and secure communication in payment components (GIT PayFlow, GIT CoreBank).</td></tr>
+<tr><td><b>Assurance frameworks</b></td><td>Control set designed for certification to ISO/IEC 27001:2022 (with 27017/27018 for cloud), attestation against BSI C5 and SOC 2 Type II; PCI DSS 4.0.1 for card data. In this fictional scenario none of these are held.</td></tr>
+</table></div>
+
+<h2>6. Limits and customer responsibilities</h2>
+<ul>
+<li>Customers decide classification of their own critical or important functions, their impact tolerances and their final register of information.</li>
+<li>Customers configure their user roles, approval workflows and key-management option (GIT-managed or customer-managed).</li>
+<li>Customer-side endpoints and integrations are outside the GIT control boundary unless covered by a managed service.</li>
+<li>Specific targets (RPO, RTO, retention, patch times) are service-level values to be fixed in the customer contract.</li>
+</ul>
+<p><a class="btn" href="contact.html">Request the security whitepaper and control mapping</a></p>
+</div></main>
+<footer><div class="wrap"><span>© 2026 Gild Investment Trust (GIT). Fictional company for demonstration.</span><span><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="imprint.html">Imprint</a></span></div></footer>
+</body></html>
